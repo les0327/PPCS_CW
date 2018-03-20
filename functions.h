@@ -13,4 +13,6 @@ void fillMatrix(int num, int *A, int n);
 void vectorSort(int *A, int from, int to);
 void merge(int *A, int leftIndex, int rightIndex, int size);
 
+void F(int *A, const int *B, int e, int *C, int *MX, int *MZ, int from, int to, int n);
+
 #endif //PPCS_CW_FUNCTIONS_H

@@ -14,14 +14,6 @@ void printVector(int *A, int n) {
     printf("\n");
 }
 
-void printMatrix(int *A, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++)
-            printf("%d ", A[i*n + j]);
-        printf("\n");
-    }
-    printf("\n");
-}
 
 void fillVector(int num, int *A, int n) {
     for (int i = 0; i < n; i++)
@@ -40,7 +32,7 @@ void fillMatrix(int num, int *A, int n) {
  * @param B - matrix
  * @param C=A*B - matrix
  */
-void matrixMultiplication(int *A, int *B, int *C, int from, int to, int n) {
+void matrixMultiplication(const int *A, const int *B, int *C, int from, int to, int n) {
     int buf;
     for (int i = 0; i < n; i++ ) {
         for (int j = from; j < to; j++) {
@@ -59,7 +51,7 @@ void matrixMultiplication(int *A, int *B, int *C, int from, int to, int n) {
  * @param B - matrix
  * @param C=A*B - vector
  */
-void vectorMatrixMultiplication(int *A, int *B, int *C, int from, int to, int n) {
+void vectorMatrixMultiplication(const int *A, const int *B, int *C, int from, int to, int n) {
     int buf;
     for (int i = from; i < to; i++ ) {
         buf = 0;
@@ -98,7 +90,7 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 	int leftSize = leftIndex + size;
 	int rightSize = rightIndex + size;
 
-	int *buf = (int *)malloc(static_cast<size_t>(size * 2 * 4));
+    auto *buf = (int *)malloc(static_cast<size_t>(size * 2 * 4));
 
 	int i;
 	for (i = 0 ; leftIndex < leftSize && rightIndex < rightSize; i++) {
@@ -124,4 +116,16 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 		A[index++] = buf[i];
 
 	free(buf);
+}
+void F(int *A, const int *B, int e, int *C, int *MX, int *MZ, int from, int to, int n) {
+    auto MBuf = (int *) malloc(static_cast<size_t>(n * n * 4));
+
+    matrixMultiplication(MX, MZ, MBuf, from, to, n);
+    vectorMatrixMultiplication(C, MBuf, A, from, to, n);
+
+    for (int i = from; i < to; i++) {
+        A[i] = A[i] + B[i] * e;
+    }
+
+    free(MBuf);
 }
