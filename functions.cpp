@@ -90,7 +90,7 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 	int leftSize = leftIndex + size;
 	int rightSize = rightIndex + size;
 
-    auto *buf = (int *)malloc(static_cast<size_t>(size * 2 * 4));
+    auto *buf = (int *)malloc((size_t)(size * 2 * 4));
 
 	int i;
 	for (i = 0 ; leftIndex < leftSize && rightIndex < rightSize; i++) {
@@ -118,7 +118,7 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 	free(buf);
 }
 void F(int *A, const int *B, int e, int *C, int *MX, int *MZ, int from, int to, int n) {
-    auto MBuf = (int *) malloc(static_cast<size_t>(n * n * 4));
+    auto MBuf = (int *) malloc((size_t)(n * n * 4));
 
     matrixMultiplication(MX, MZ, MBuf, from, to, n);
     vectorMatrixMultiplication(C, MBuf, A, from, to, n);
