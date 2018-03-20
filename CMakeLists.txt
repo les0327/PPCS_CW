@@ -10,5 +10,5 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp functions.h functions.cpp)
-add_executable(PPCS_CW main.cpp)
+set(SOURCE_FILES main.cpp functions.cpp functions.h)
+add_executable(PPCS_CW main.cpp functions.cpp functions.h)

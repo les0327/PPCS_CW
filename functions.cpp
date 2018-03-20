@@ -2,9 +2,8 @@
 // Created by Foresstt on 28-Oct-17.
 //
 
-#include <stdio.h>
-#include <tchar.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "functions.h"
 
@@ -99,7 +98,7 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 	int leftSize = leftIndex + size;
 	int rightSize = rightIndex + size;
 
-	int * buf = (int *)malloc(size * 2 * 4);
+	int *buf = (int *)malloc(static_cast<size_t>(size * 2 * 4));
 
 	int i;
 	for (i = 0 ; leftIndex < leftSize && rightIndex < rightSize; i++) {
@@ -125,17 +124,4 @@ void merge(int *A, int leftIndex, int rightIndex, int size) {
 		A[index++] = buf[i];
 
 	free(buf);
-}
-
-void F(int *A, int e, int *Z, int d, int *S, int *MO, int *MH, int from, int to, int n) {
-	int *MBuf = (int *)malloc(n * n * 4);
-
-	matrixMultiplication(MO, MH, MBuf, from, to, n);
-	vectorMatrixMultiplication(S, MBuf, A, from, to, n);
-
-	for (int i = from; i < to; i++) {
-		A[i] = A[i] * d + e * Z[i];
-	}
-
-	free(MBuf);
 }
