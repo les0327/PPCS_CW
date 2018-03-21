@@ -1,5 +1,6 @@
 #include <iostream>
 #include <omp.h>
+#include <cmath>
 #include "functions.h"
 
 using std::cout;
@@ -46,11 +47,6 @@ int main() {
     {
         int tid = omp_get_thread_num(); // get thread id
 
-        // local variables for
-        int e_local;
-        int *C_local;
-        int *MX_local;
-
         cout << "Thread " << tid << " start\n";
 
         if (tid == 0) {
@@ -62,12 +58,17 @@ int main() {
         if (tid == p - 1) {
             fillVector(num, B, n);
             fillMatrix(num, MZ, n);
-            //B[0] = 20;
+            B[0] = 4;
         }
 
         #pragma omp barrier // wait until finish enter data
 
+        // local variables for shared resources
+        int e_local;
+        int *C_local;
+        int *MX_local;
 
+        // critical section for coping data
         #pragma omp critical
         {
             e_local = e;
@@ -78,19 +79,43 @@ int main() {
 
         vectorSort(B, int(h * tid), (int)(h * (tid + 1)));
 
+        if (p != 1) {
+            int mod = 1;
+            float hl = h;
+            do {
+                mod *= 2;
+                if (tid % mod == 0) {
+                    auto leftSize = (int) hl;
+                    auto rightSize = (int)(hl * 2) - leftSize;
+                    auto leftIndex = (int) (tid * hl);
+					auto rightIndex = (int)((tid + 1) * hl);
+                    merge(B, leftIndex, rightIndex, leftSize, rightSize, leftSize + rightSize);
+                }
+                hl *= 2;
+                #pragma omp barrier
+            } while (mod != p);
+        }
+
+
         #pragma omp barrier // wait until sorting and merging finish
         F(A, B, e_local, C_local, MX_local, MZ, (int) h * tid, int(h * (tid + 1)), n);
 
-
         #pragma omp barrier // wait until computing finish
-        if (tid == p - 1) {
-            cout << "A = ";
-            printVector(A, n);
-        }
 
-        cout << "T" << tid << " finish\n";
+		#pragma omp critical // for pretty print
+		{
+			if (tid == p - 1) {
+				cout << "A = ";
+				printVector(A, n);
+			}
+			cout << "Thread " << tid << " finish\n";
+		}
     };
 
     free_memory();
+
+	int i;
+	cin >> i;
+
     return 0;
 }
