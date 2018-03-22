@@ -32,7 +32,6 @@ void free_memory() {
 }
 
 void run() {
-    omp_set_num_threads(p);
 #pragma omp parallel
     {
         int tid = omp_get_thread_num(); // get thread id
@@ -48,7 +47,7 @@ void run() {
         if (tid == p - 1) {
             fillVector(num, B, n);
             fillMatrix(num, MZ, n);
-//            B[0] = 4;
+            B[0] = 4;
         }
 
 #pragma omp barrier // wait until finish enter data
@@ -72,13 +71,18 @@ void run() {
         if (p != 1) {
             int mod = 1;
             float hl = h;
+			auto leftIndex = (int)(tid * hl);
             do {
                 mod *= 2;
                 if (tid % mod == 0) {
                     auto leftSize = (int) hl;
                     auto rightSize = (int)(hl * 2) - leftSize;
-                    auto leftIndex = (int) (tid * hl);
-                    auto rightIndex = (int)((tid + 1) * hl);
+					auto rightIndex = (int)(leftIndex + leftSize);
+					#pragma omp critical // for pretty print
+					{
+						cout << "T" << tid << " li=" << leftIndex << " ri=" << rightIndex << " ls" << leftSize << " rs=" << rightSize << "\n";
+					}
+					
                     merge(B, leftIndex, rightIndex, leftSize, rightSize, leftSize + rightSize);
                 }
                 hl *= 2;
@@ -108,8 +112,9 @@ int main() {
     cin >> p;
     cout << "Enter n:\n";
     cin >> n;
-
     h = (float) n / p;
+
+	omp_set_num_threads(p);
 
     init_memory();
 
@@ -121,7 +126,8 @@ int main() {
 
     free_memory();
 
-//	int i;
-//	cin >> i;
+	int i;
+	cin >> i;
+
     return 0;
 }

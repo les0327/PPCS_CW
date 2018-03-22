@@ -91,7 +91,7 @@ void merge(int *A, int leftIndex, int rightIndex, int leftSize, int rightSize, i
     leftSize += leftIndex;
     rightSize += rightIndex;
 
-    auto *buf = (int *)malloc((size_t)((leftSize + rightSize) * 4));
+    auto *buf = (int *)malloc((size_t)((n) * 4));
 
 	int i;
 	for (i = 0 ; leftIndex < leftSize && rightIndex < rightSize; i++) {
@@ -106,15 +106,21 @@ void merge(int *A, int leftIndex, int rightIndex, int leftSize, int rightSize, i
 	}
 
 	while (leftIndex < leftSize) {
-		buf[i++] = A[leftIndex++];
+		buf[i] = A[leftIndex];
+		i++;
+		leftIndex++;
 	}
 
 	while (rightIndex < rightSize) {
-		buf[i++] = A[rightIndex++];
+		buf[i] = A[rightIndex];
+		i++;
+		rightIndex++;
 	}
 
-	for (i = 0; i < n; i++)
-		A[index++] = buf[i];
+	for (i = 0; i < n; i++) {
+		A[index] = buf[i];
+		index++;
+	}
 
 	free(buf);
 }
