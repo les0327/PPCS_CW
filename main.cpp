@@ -6,6 +6,9 @@
 
 using std::cout;
 using std::cin;
+using std::chrono::steady_clock;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
 
 int p, n;
 float h;
@@ -78,11 +81,7 @@ void run() {
                     auto leftSize = (int) hl;
                     auto rightSize = (int)(hl * 2) - leftSize;
 					auto rightIndex = (int)(leftIndex + leftSize);
-					#pragma omp critical // for pretty print
-					{
-						cout << "T" << tid << " li=" << leftIndex << " ri=" << rightIndex << " ls" << leftSize << " rs=" << rightSize << "\n";
-					}
-					
+
                     merge(B, leftIndex, rightIndex, leftSize, rightSize, leftSize + rightSize);
                 }
                 hl *= 2;
@@ -118,11 +117,11 @@ int main() {
 
     init_memory();
 
-    auto start = std::chrono::steady_clock::now();
+    auto start = steady_clock::now();
     run();
-    auto end = std::chrono::steady_clock::now();
+    auto end = steady_clock::now();
     cout << "p = " << p << ", n = " << n << "\n";
-    cout<<"Time is = "<< std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()<<" ms\n";
+    cout<<"Time is = "<< duration_cast<milliseconds>(end - start).count()<<" ms\n";
 
     free_memory();
 
